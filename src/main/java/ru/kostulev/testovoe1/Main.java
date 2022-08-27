@@ -10,7 +10,7 @@ public class Main {
         System.out.println(page.getText());
         System.out.println("Частоты:");
         Statistic statistic = new Statistic();
-        statistic.setStat(page.getText());
+        statistic.setStats(page.getText());
         statistic.setAverage();
         statistic.setApproximate();
     }

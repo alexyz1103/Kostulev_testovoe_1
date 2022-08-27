@@ -1,24 +1,11 @@
 package ru.kostulev.testovoe1;
 
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class Statistic {
-    private ArrayList<String> chStat = new ArrayList<>();
-    private ArrayList<Integer> countStat = new ArrayList<>();
+    private Map<String, Integer> stats = new HashMap<>();
     private double average;
     private ArrayList<String> approximate = new ArrayList<String>();
-
-    public ArrayList<String> getChStat() {
-        return chStat;
-    }
-
-    public ArrayList<Integer> getCountstat() {
-        return countStat;
-    }
 
     public double getAverage() {
         return average;
@@ -28,52 +15,50 @@ public class Statistic {
         return approximate;
     }
 
-    public void setStat(String str){
-        Set<Character> set = new HashSet<>();
-        StringBuilder sb = new StringBuilder();
-        for (char c : str.toCharArray())
-        {
-            if (!set.contains(c))
-            {
-                int count = StringUtils.countMatches(str, c);
-                String raz;
-                switch (count){
-                    case (2):
-                        raz = " раза";
-                        break;
-                    case (3):
-                        raz = " раза";
-                        break;
-                    case (4):
-                        raz = " раза";
-                        break;
-                    default:
-                        raz = " раз";
-                        break;
-                }
-                System.out.println(c + " - " + count  + raz);
-                chStat.add(String.valueOf(c));
-                countStat.add(count);
-                set.add(c);
-                sb.append(c);
+    public void setStats(String str) {
+        for (int i = 0; i < str.length(); i++) {
+            if (!stats.containsKey(String.valueOf(str.charAt(i)))) {
+                stats.put(String.valueOf(str.charAt(i)), 1);
+            } else {
+                stats.replace(String.valueOf(str.charAt(i)), (stats.get(String.valueOf(str.charAt(i))) + 1));
             }
         }
-        String result = sb.toString();
+        for (Map.Entry<String, Integer> item : stats.entrySet()) {
+            String raz;
+            switch (item.getValue()) {
+                case (2):
+                    raz = " раза";
+                    break;
+                case (3):
+                    raz = " раза";
+                    break;
+                case (4):
+                    raz = " раза";
+                    break;
+                default:
+                    raz = " раз";
+                    break;
+            }
+            System.out.printf("%s - %d %s \n", item.getKey(), item.getValue(),raz);
+        }
+    }
+
+    public Map<String, Integer> getStats() {
+        return stats;
     }
 
     public void setAverage(){
         int sum = 0;
-        for (int elements: countStat) sum += elements;
-        average = (double) sum/ (double) countStat.size();
-        System.out.println("Среднее значение частоты " + sum + "/" + countStat.size() + "=" +
+        for (Map.Entry<String, Integer> item : stats.entrySet()) sum += item.getValue();
+        average = (double) sum/ (double) stats.size();
+        System.out.println("Среднее значение частоты " + sum + "/" + stats.size() + "=" +
                 average);
     }
 
     public void setApproximate(){
         int round = (int) Math.round(average);
-        for (int i = 0; i < countStat.size(); i++){
-            if (countStat.get(i)==round) approximate.add(chStat.get(i));
-        }
+        for(Map.Entry<String,Integer> item: stats.entrySet())
+            if (item.getValue()==round) approximate.add(item.getKey());
         System.out.print("Символы, которые соответствуют условию наиболее близкого значения частоты к среднему значению: ");
         System.out.print(approximate);
     }
